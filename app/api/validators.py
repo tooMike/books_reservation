@@ -1,5 +1,4 @@
 from io import BytesIO
-
 import aiofiles
 from fastapi import HTTPException, UploadFile
 from PIL import Image
@@ -7,8 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.author import author_crud
 from app.crud.book import book_crud
-from app.models import Book, Genre
-from app.models.author import Author
+from app.crud.genre import genre_crud
+
+from app.models import Book, Genre, Author
+
 
 
 async def validate_image(image: UploadFile) -> str:
@@ -68,10 +69,40 @@ async def check_genre_exists(
     genre_id: int,
     session: AsyncSession,
 ) -> Genre:
-    genre = await book_crud.get(genre_id, session)
+    """Проверка существования жанра с заданным id."""
+    genre = await genre_crud.get(genre_id, session)
     if genre is None:
         raise HTTPException(
             status_code=404,
             detail='Жанр не найден!'
         )
     return genre
+
+
+async def check_all_genre_exists(
+    genre_ids: list[int],
+    session: AsyncSession,
+) -> list[Genre]:
+    """Проверка существования жанров по заданном списка id."""
+    genres = await genre_crud.get_genres_by_list_ids(
+        genre_ids=genre_ids,
+        session=session
+    )
+    if len(genres) != len(genre_ids):
+        raise HTTPException(
+            status_code=400,
+            detail="Передан невалидный список жанров"
+        )
+    return genres
+
+
+async def check_genre_name_duplicate(
+    genre_name: str,
+    session: AsyncSession,
+) -> None:
+    genre_id = await genre_crud.get_genre_id_by_name(genre_name, session)
+    if genre_id is not None:
+        raise HTTPException(
+            status_code=422,
+            detail='Жанр с таким именем уже существует!',
+        )

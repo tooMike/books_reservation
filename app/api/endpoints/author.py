@@ -15,7 +15,7 @@ router = APIRouter()
 @router.post(
     '/',
     response_model=AuthorDB,
-    dependencies=[Depends(current_superuser)]
+    # dependencies=[Depends(current_superuser)]
 )
 async def create_author(
         first_name: str,
@@ -40,7 +40,7 @@ async def create_author(
 @router.delete(
     '/{author_id}',
     response_model=AuthorDB,
-    dependencies=[Depends(current_superuser)]
+    # dependencies=[Depends(current_superuser)]
 )
 async def delete_author(
         author_id: int,

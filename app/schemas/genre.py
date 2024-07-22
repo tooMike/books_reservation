@@ -11,6 +11,10 @@ class GenreCreate(GenreBase):
     """Создания жанра."""
 
 
+class GenreUpdate(GenreBase):
+    """Изменение жанра."""
+
+
 class GenreDB(GenreBase):
     """Получение информации о жанре."""
 

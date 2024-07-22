@@ -16,7 +16,7 @@ class Author(Base):
     last_name: Mapped[str] = mapped_column(String, nullable=False)
     avatar: Mapped[Optional[str]] = mapped_column(String, nullable=False)
 
-    books: Mapped['Book'] = relationship(back_populates='author')
+    books: Mapped[list['Book']] = relationship(back_populates='author')
 
     def __repr__(self):
         return f"{self.first_name} {self.last_name}"

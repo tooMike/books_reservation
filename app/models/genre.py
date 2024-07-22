@@ -4,6 +4,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
+from app.models.book import book_genre_association
 
 if TYPE_CHECKING:
     from app.models.book import Book
@@ -14,7 +15,9 @@ class Genre(Base):
 
     name: Mapped[str] = mapped_column(String, nullable=False)
 
-    books: Mapped['Book'] = relationship(back_populates='genres')
+    books: Mapped[list['Book']] = relationship(
+        secondary=book_genre_association, back_populates="genres"
+    )
 
     def __repr__(self):
         return self.name
