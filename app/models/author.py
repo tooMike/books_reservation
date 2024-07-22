@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Integer, String, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -11,18 +11,17 @@ from app.core.db import Base
 #     from app.models.comment import Comment
 
 
-class Book(Base):
-    """Модель книги."""
+class Author(Base):
+    """Автор книги."""
 
-    name: Mapped[str] = mapped_column(String, nullable=False)
-    price: Mapped[float] = mapped_column(Float)
-    pages: Mapped[int] = mapped_column(Integer)
-    author_id: Mapped[int] = mapped_column(Integer, ForeignKey('author.id'))
-    genre_id: Mapped[int] = mapped_column(Integer, ForeignKey('genre.id'))
+    first_name: Mapped[str] = mapped_column(String, nullable=False)
+    last_name: Mapped[float] = mapped_column(Float)
+    avatar: Mapped[Optional[str]] = mapped_column(String)
+
 
     # user: Mapped['User'] = relationship(back_populates='posts')
     # group: Mapped['Group'] = relationship(back_populates='posts')
     # comments: Mapped['Comment'] = relationship(back_populates='post')
 
     def __repr__(self):
-        return self.name[:25]
+        return f"{self.name} {self.surname}"

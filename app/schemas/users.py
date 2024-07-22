@@ -12,14 +12,8 @@ class UserBase(schemas.CreateUpdateDictModel):
 
 class UserRead(UserBase):
     """Получение информации о пользователе."""
-
+    avatar: str | None = None
     model_config = ConfigDict(from_attributes=True)
-
-
-class UserReadDB(UserRead):
-    """Получение информации о пользователе c аватаров."""
-
-    avatar: str
 
 
 class UserCreate(UserBase):

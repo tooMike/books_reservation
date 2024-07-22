@@ -1,3 +1,5 @@
+import os
+
 from fastapi import Depends, UploadFile
 from fastapi_users import (
     BaseUserManager, FastAPIUsers, IntegerIDMixin, InvalidPasswordException
@@ -52,8 +54,25 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             self,
             user: User,
             avatar: str,
-    ):
+    ) -> User:
+        """Добавление пользователю нового аватара"""
         new_avatar = {"avatar": avatar}
+        await self.user_db.update(user, new_avatar)
+        return user
+
+
+    async def delete_avatar(
+            self,
+            user: User,
+    ) -> User:
+        """Удаление аватара пользователя."""
+        if user.avatar:
+            # Удаление файла с диска
+            try:
+                os.remove(user.avatar)
+            except FileNotFoundError:
+                pass
+        new_avatar = {"avatar": None}
         await self.user_db.update(user, new_avatar)
         return user
 
