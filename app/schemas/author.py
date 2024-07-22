@@ -1,5 +1,4 @@
-from fastapi_users import schemas
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class AuthorBase(BaseModel):
@@ -7,18 +6,15 @@ class AuthorBase(BaseModel):
 
     first_name: str = Field(..., min_length=3)
     last_name: str = Field(..., min_length=3)
+    avatar: str
 
 
 class AuthorCreate(AuthorBase):
-    """Схема для создания автора."""
-
-    avatar: str
-    pass
+    """Создания автора."""
 
 
 class AuthorDB(AuthorBase):
     """Получение информации об авторе."""
 
     id: int
-    avatar: str
     model_config = ConfigDict(from_attributes=True)

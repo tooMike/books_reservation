@@ -1,27 +1,22 @@
 from typing import Optional, TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, Integer, String, Float
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
 
-# if TYPE_CHECKING:
-#     from app.models.group import Group
-#     from app.models.users import User
-#     from app.models.comment import Comment
+if TYPE_CHECKING:
+    from app.models.book import Book
 
 
 class Author(Base):
     """Автор книги."""
 
     first_name: Mapped[str] = mapped_column(String, nullable=False)
-    last_name: Mapped[float] = mapped_column(Float)
-    avatar: Mapped[Optional[str]] = mapped_column(String)
+    last_name: Mapped[str] = mapped_column(String, nullable=False)
+    avatar: Mapped[Optional[str]] = mapped_column(String, nullable=False)
 
-
-    # user: Mapped['User'] = relationship(back_populates='posts')
-    # group: Mapped['Group'] = relationship(back_populates='posts')
-    # comments: Mapped['Comment'] = relationship(back_populates='post')
+    books: Mapped['Book'] = relationship(back_populates='author')
 
     def __repr__(self):
-        return f"{self.name} {self.surname}"
+        return f"{self.first_name} {self.last_name}"

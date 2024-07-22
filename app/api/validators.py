@@ -6,6 +6,8 @@ from PIL import Image
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.author import author_crud
+from app.crud.book import book_crud
+from app.models import Book, Genre
 from app.models.author import Author
 
 
@@ -47,3 +49,29 @@ async def check_author_exists(
             detail='Автор не найден!'
         )
     return author
+
+
+async def check_book_exists(
+    book_id: int,
+    session: AsyncSession,
+) -> Book:
+    book = await book_crud.get(book_id, session)
+    if book is None:
+        raise HTTPException(
+            status_code=404,
+            detail='Книга не найден!'
+        )
+    return book
+
+
+async def check_genre_exists(
+    genre_id: int,
+    session: AsyncSession,
+) -> Genre:
+    genre = await book_crud.get(genre_id, session)
+    if genre is None:
+        raise HTTPException(
+            status_code=404,
+            detail='Жанр не найден!'
+        )
+    return genre

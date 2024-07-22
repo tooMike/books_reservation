@@ -1,16 +1,13 @@
-import os
-
-from fastapi import Depends, UploadFile
+from fastapi import Depends
 from fastapi_users import (
-    BaseUserManager, FastAPIUsers, IntegerIDMixin, InvalidPasswordException
+    BaseUserManager, FastAPIUsers, IntegerIDMixin, InvalidPasswordException,
 )
 from fastapi_users.authentication import (
-    AuthenticationBackend, BearerTransport, JWTStrategy
+    AuthenticationBackend, BearerTransport, JWTStrategy,
 )
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import validate_image
 from app.core.config import settings
 from app.core.db import get_async_session
 from app.models.users import User
@@ -49,32 +46,6 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             raise InvalidPasswordException(
                 reason='Password should not contain e-mail'
             )
-
-    async def create_avatar(
-            self,
-            user: User,
-            avatar: str,
-    ) -> User:
-        """Добавление пользователю нового аватара"""
-        new_avatar = {"avatar": avatar}
-        await self.user_db.update(user, new_avatar)
-        return user
-
-
-    async def delete_avatar(
-            self,
-            user: User,
-    ) -> User:
-        """Удаление аватара пользователя."""
-        if user.avatar:
-            # Удаление файла с диска
-            try:
-                os.remove(user.avatar)
-            except FileNotFoundError:
-                pass
-        new_avatar = {"avatar": None}
-        await self.user_db.update(user, new_avatar)
-        return user
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):

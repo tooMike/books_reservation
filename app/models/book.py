@@ -1,14 +1,13 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, Integer, String, Float
+from sqlalchemy import Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
 
-# if TYPE_CHECKING:
-#     from app.models.group import Group
-#     from app.models.users import User
-#     from app.models.comment import Comment
+if TYPE_CHECKING:
+    from app.models.genre import Genre
+    from app.models.author import Author
 
 
 class Book(Base):
@@ -20,9 +19,8 @@ class Book(Base):
     author_id: Mapped[int] = mapped_column(Integer, ForeignKey('author.id'))
     genre_id: Mapped[int] = mapped_column(Integer, ForeignKey('genre.id'))
 
-    # user: Mapped['User'] = relationship(back_populates='posts')
-    # group: Mapped['Group'] = relationship(back_populates='posts')
-    # comments: Mapped['Comment'] = relationship(back_populates='post')
+    author: Mapped['Author'] = relationship(back_populates='books')
+    genres: Mapped['Genre'] = relationship(back_populates='books')
 
     def __repr__(self):
-        return self.name[:25]
+        return self.name

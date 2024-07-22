@@ -14,9 +14,5 @@ from app.core.db import Base
 class User(SQLAlchemyBaseUserTable[int], Base):
     """Модель пользователя."""
 
-    name: Mapped[str] = mapped_column(String, nullable=False)
-    surname: Mapped[str] = mapped_column(String, nullable=False)
-    avatar: Mapped[Optional[str]] = mapped_column(String)
-
     # posts: Mapped[List['Post']] = relationship(back_populates='user')
     # comments: Mapped[List['Comment']] = relationship(back_populates='user')
