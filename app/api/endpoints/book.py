@@ -62,32 +62,37 @@ async def get_all_books(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Получение списка всех книг."""
-    books = await book_crud.get_multi(session)
+    books = await book_crud.get_multi_books(session)
     return books
 
 
-# @router.patch(
-#     '/{book_id}',
-#     response_model=BookDB,
-#     # dependencies=[Depends(current_superuser)],
-# )
-# async def partially_update_genre(
-#         book_id: int,
-#         obj_in: BookUpdate,
-#         session: AsyncSession = Depends(get_async_session),
-# ):
-#     """Изменение жанра. Только для суперюзеров."""
-#     genre = await check_genre_exists(
-#         genre_id=genre_id, session=session
-#     )
-#
-#     if genre.name is not None:
-#         await check_genre_name_duplicate(
-#             genre_name=obj_in.name,
-#             session=session
-#         )
-#
-#     genre = await genre_crud.update(
-#         db_obj=genre, obj_in=obj_in, session=session
-#     )
-#     return genre
+@router.patch(
+    '/{book_id}',
+    response_model=BookDB,
+    # dependencies=[Depends(current_superuser)],
+)
+async def partially_update_book(
+        book_id: int,
+        obj_in: BookUpdate,
+        session: AsyncSession = Depends(get_async_session),
+):
+    """Изменение книги. Только для суперюзеров."""
+    # Проверяем, что такая книга существует
+    book = await check_book_exists(
+        book_id=book_id, session=session
+    )
+
+    # Проверяем, существует ли автор с переданным id
+    if obj_in.author_id is not None:
+        await check_author_exists(author_id=obj_in.author_id, session=session)
+    # Проверяем, существуют ли жанры с переданными id
+    if obj_in.genres is not None:
+        genres = await check_all_genre_exists(genre_ids=obj_in.genres, session=session)
+        book = await book_crud.update_book(
+            db_obj=book, obj_in=obj_in, genres=genres, session=session
+        )
+    else:
+        book = await book_crud.update_book(
+            db_obj=book, obj_in=obj_in, session=session
+        )
+    return book

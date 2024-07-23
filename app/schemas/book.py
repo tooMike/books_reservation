@@ -21,11 +21,11 @@ class BookCreate(BookBase):
 class BookUpdate(BaseModel):
     """Изменение книги."""
 
-    name: str | None = Field(..., min_length=3)
-    price: float | None = Field(..., ge=0)
-    pages: int | None = Field(..., gt=0)
-    author_id: int | None
-    genres: list[int] | None
+    name: str | None = Field(None, min_length=3)
+    price: float | None = Field(None, ge=0)
+    pages: int | None = Field(None, gt=0)
+    author_id: int | None = None
+    genres: list[int] | None = None
 
 
 

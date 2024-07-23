@@ -7,7 +7,7 @@ from app.api.validators import check_author_exists, validate_image
 from app.core.db import get_async_session
 from app.core.users import current_superuser
 from app.crud.author import author_crud
-from app.schemas.author import AuthorCreate, AuthorDB
+from app.schemas.author import AuthorCreate, AuthorDB, AuthorUpdate
 
 router = APIRouter()
 
@@ -54,7 +54,7 @@ async def delete_author(
         try:
             os.remove(author.avatar)
         except FileNotFoundError:
-            pass  # Файл уже не существует, игнорируем ошибку
+            pass
     return author
 
 
@@ -68,3 +68,43 @@ async def get_all_authors(
     """Получение списка всех авторов."""
     authors = await author_crud.get_multi(session)
     return authors
+
+
+
+@router.patch(
+    '/{author_id}',
+    response_model=AuthorDB,
+    # dependencies=[Depends(current_superuser)],
+)
+async def partially_update_author(
+        author_id: int,
+        first_name: str | None = None,
+        last_name: str | None = None,
+        avatar: UploadFile | None = File(None),
+        session: AsyncSession = Depends(get_async_session),
+):
+    """Изменение данных автора. Только для суперюзеров."""
+    author = await check_author_exists(
+        author_id=author_id, session=session
+    )
+    update_data = AuthorUpdate(
+        first_name=first_name,
+        last_name=last_name,
+        avatar=None
+    )
+    if avatar is not None:
+        image_path = await validate_image(image=avatar)
+        update_data.avatar = image_path
+        # Удаляем предыдущий аватар с диска
+        if author.avatar:
+            try:
+                os.remove(image_path)
+            except FileNotFoundError:
+                pass
+
+    author = await author_crud.update(
+        db_obj=author,
+        obj_in=update_data,
+        session=session
+    )
+    return author

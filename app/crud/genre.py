@@ -34,5 +34,4 @@ class CRUDGenre(CRUDBase):
         return genres.scalars().all()
 
 
-
 genre_crud = CRUDGenre(Genre)
