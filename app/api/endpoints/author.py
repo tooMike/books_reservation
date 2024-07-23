@@ -15,7 +15,7 @@ router = APIRouter()
 @router.post(
     '/',
     response_model=AuthorDB,
-    # dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)]
 )
 async def create_author(
         first_name: str,
@@ -23,7 +23,7 @@ async def create_author(
         avatar: UploadFile = File(...),
         session: AsyncSession = Depends(get_async_session)
 ):
-    """Создание автора.Только для суперюзеров."""
+    """Создание автора. Только для суперюзеров."""
     image_path = await validate_image(image=avatar)
     obj_in = AuthorCreate(
         first_name=first_name,
@@ -40,7 +40,7 @@ async def create_author(
 @router.delete(
     '/{author_id}',
     response_model=AuthorDB,
-    # dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)]
 )
 async def delete_author(
         author_id: int,
@@ -63,18 +63,17 @@ async def delete_author(
     response_model=list[AuthorDB]
 )
 async def get_all_authors(
-    session: AsyncSession = Depends(get_async_session),
+        session: AsyncSession = Depends(get_async_session),
 ):
     """Получение списка всех авторов."""
     authors = await author_crud.get_multi(session)
     return authors
 
 
-
 @router.patch(
     '/{author_id}',
     response_model=AuthorDB,
-    # dependencies=[Depends(current_superuser)],
+    dependencies=[Depends(current_superuser)],
 )
 async def partially_update_author(
         author_id: int,

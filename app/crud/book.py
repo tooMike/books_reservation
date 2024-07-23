@@ -15,7 +15,7 @@ class CRUDBook(CRUDBase):
             self,
             book_id: int,
             session: AsyncSession,
-    ):
+    ) -> list[Book]:
         """Получение книги и связанных жанров."""
         book = await session.execute(
             select(self.model).where(
@@ -29,7 +29,7 @@ class CRUDBook(CRUDBase):
             obj_in: dict,
             genres: list[Genre],
             session: AsyncSession,
-    ):
+    ) -> Book:
         """Создание книги."""
         book = self.model(**obj_in)
         book.genres = genres
@@ -54,15 +54,15 @@ class CRUDBook(CRUDBase):
             obj_in,
             session: AsyncSession,
             genres: list[Genre] | None = None,
-    ):
+    ) -> Book:
         """Изменение книги."""
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.model_dump(exclude_unset=True)
         # Заменяем в update_data id жанров на объекты модели
         if genres is not None:
             # Подгружаем книгу со связанными жанрами
-            book = await book_crud.get_book(book_id=db_obj.id, session=session)
-            book.genres = genres
+            db_obj = await book_crud.get_book(book_id=db_obj.id, session=session)
+            db_obj.genres = genres
 
         for field in obj_data:
             if field in update_data:

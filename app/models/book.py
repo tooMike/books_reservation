@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from app.models.author import Author
     from app.models.reservation import Reservation
 
-
 book_genre_association = Table(
     "book_genre_association",
     Base.metadata,

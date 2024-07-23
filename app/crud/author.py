@@ -13,7 +13,7 @@ class CRUDAuthor(CRUDBase):
             obj_in,
             session: AsyncSession,
     ):
-        """Изменение объекта."""
+        """Изменение автора."""
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.model_dump(exclude_unset=True)
 

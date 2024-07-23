@@ -58,12 +58,6 @@ class ReservationCreate(ReservationBase):
     book_id: int
 
 
-class ReservationDelete(BaseModel):
-    """Схема для удаления бронирования."""
-
-    book_id: int
-
-
 class ReservationDB(ReservationBase):
     """Схема для отображения бронирования."""
 

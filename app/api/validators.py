@@ -45,6 +45,7 @@ async def check_author_exists(
         author_id: int,
         session: AsyncSession,
 ) -> Author:
+    """Проверка, что автор с переданным id существует."""
     author = await author_crud.get(author_id, session)
     if author is None:
         raise HTTPException(
@@ -58,6 +59,7 @@ async def check_book_exists(
         book_id: int,
         session: AsyncSession,
 ) -> Book:
+    """Проверка, что книга с переданным id существует."""
     book = await book_crud.get(book_id, session)
     if book is None:
         raise HTTPException(
@@ -71,7 +73,7 @@ async def check_genre_exists(
         genre_id: int,
         session: AsyncSession,
 ) -> Genre:
-    """Проверка существования жанра с заданным id."""
+    """Проверка, что жанр с переданным id существует."""
     genre = await genre_crud.get(genre_id, session)
     if genre is None:
         raise HTTPException(
@@ -85,7 +87,7 @@ async def check_all_genre_exists(
         genre_ids: list[int],
         session: AsyncSession,
 ) -> list[Genre]:
-    """Проверка существования жанров по заданном списка id."""
+    """Проверка, что жанры с переданным списком id существуют."""
     genres = await genre_crud.get_genres_by_list_ids(
         genre_ids=genre_ids,
         session=session
@@ -102,6 +104,7 @@ async def check_genre_name_duplicate(
         genre_name: str,
         session: AsyncSession,
 ) -> None:
+    """Проверка дубликатов названия жанров."""
     genre_id = await genre_crud.get_genre_id_by_name(genre_name, session)
     if genre_id is not None:
         raise HTTPException(
@@ -121,10 +124,11 @@ async def check_reservation_intersections(**kwargs) -> None:
             detail=str(reservations)
         )
 
+
 async def check_reservation_before_edit(
-    reservation_id: int,
-    session: AsyncSession,
-    user: User
+        reservation_id: int,
+        session: AsyncSession,
+        user: User
 ) -> Reservation:
     """Проверка существования и возможности редактирования бронирования """
     reservation = await reservation_crud.get(

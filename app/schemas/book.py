@@ -1,6 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.models import Genre
 from app.schemas.genre import GenreDB
 
 
@@ -28,23 +27,18 @@ class BookUpdate(BaseModel):
     genres: list[int] | None = None
 
 
-
-
-class BookDB(BaseModel):
+class BookDB(BookBase):
     """Получение информации о книге."""
 
     id: int
-    name: str
-    price: float
-    pages: int
-    author_id: int
     genres: list[GenreDB]
     model_config = ConfigDict(from_attributes=True)
 
 
 class BookFilter(BaseModel):
-    """Фильтрация книг."""
+    """Фильтрация книг по цене, авторам и жанрам."""
+
     author_ids: list[int] | None = None
     genre_ids: list[int] | None = None
-    min_price: float | None = None
-    max_price: float | None = None
+    min_price: float | None = Field(None, ge=0)
+    max_price: float | None = Field(None, ge=0)

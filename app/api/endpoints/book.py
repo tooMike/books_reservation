@@ -6,7 +6,6 @@ from sqlalchemy.orm import selectinload
 from app.api.validators import (
     check_all_genre_exists, check_author_exists,
     check_book_exists,
-    check_genre_exists,
 )
 from app.core.db import get_async_session
 from app.core.users import current_superuser
@@ -20,7 +19,7 @@ router = APIRouter()
 @router.post(
     '/',
     response_model=BookDB,
-    # dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)]
 )
 async def create_book(
         obj_in: BookCreate,
@@ -45,7 +44,7 @@ async def create_book(
 @router.delete(
     '/{book_id}',
     response_model=BookDB,
-    # dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)]
 )
 async def delete_book(
         book_id: int,
@@ -72,7 +71,7 @@ async def get_all_books(
 @router.patch(
     '/{book_id}',
     response_model=BookDB,
-    # dependencies=[Depends(current_superuser)],
+    dependencies=[Depends(current_superuser)],
 )
 async def partially_update_book(
         book_id: int,
@@ -90,7 +89,10 @@ async def partially_update_book(
         await check_author_exists(author_id=obj_in.author_id, session=session)
     # Проверяем, существуют ли жанры с переданными id
     if obj_in.genres is not None:
-        genres = await check_all_genre_exists(genre_ids=obj_in.genres, session=session)
+        genres = await check_all_genre_exists(
+            genre_ids=obj_in.genres,
+            session=session
+        )
         book = await book_crud.update_book(
             db_obj=book, obj_in=obj_in, genres=genres, session=session
         )
@@ -106,17 +108,22 @@ async def get_books(
         books_filter: BookFilter,
         session: AsyncSession = Depends(get_async_session)
 ) -> list[BookDB]:
+    """Получение фильтрованного списка книг."""
     query = select(Book)
     if books_filter.author_ids:
         query = query.filter(Book.author_id.in_(books_filter.author_ids))
     if books_filter.genre_ids:
-        query = query.join(Book.genres).filter(Genre.id.in_(books_filter.genre_ids))
+        query = query.join(Book.genres).filter(
+            Genre.id.in_(books_filter.genre_ids)
+        )
     if books_filter.min_price:
         query = query.filter(Book.price >= books_filter.min_price)
     if books_filter.max_price:
         query = query.filter(Book.price <= books_filter.max_price)
-    result = await session.execute(query.options(
-                selectinload(Book.genres),
-            ))
+    result = await session.execute(
+        query.options(
+            selectinload(Book.genres),
+        )
+    )
     books = result.scalars().all()
     return books

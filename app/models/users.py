@@ -12,6 +12,6 @@ if TYPE_CHECKING:
 class User(SQLAlchemyBaseUserTable[int], Base):
     """Модель пользователя."""
 
-    reservations: Mapped[list['Reservation']] = relationship(back_populates='user')
-
-
+    reservations: Mapped[list['Reservation']] = relationship(
+        back_populates='user'
+    )

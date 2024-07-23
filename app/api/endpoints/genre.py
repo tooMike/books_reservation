@@ -13,7 +13,7 @@ router = APIRouter()
 @router.post(
     '/',
     response_model=GenreDB,
-    # dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)]
 )
 async def create_genre(
         genre: GenreCreate,
@@ -58,7 +58,7 @@ async def get_all_genres(
 @router.patch(
     '/{genre_id}',
     response_model=GenreDB,
-    # dependencies=[Depends(current_superuser)],
+    dependencies=[Depends(current_superuser)],
 )
 async def partially_update_genre(
         genre_id: int,
