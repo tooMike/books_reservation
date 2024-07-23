@@ -1,8 +1,7 @@
 import asyncio
-from datetime import datetime, timedelta
 
 from ..core.db import AsyncSessionLocal
-from ..models import Author, Book, Genre, Reservation, User
+from ..models import Author, Book, Genre
 
 # Создание тестовых данных
 # Авторы
@@ -36,7 +35,6 @@ book2 = Book(
     author=author1,
     genres=[genre1]
 )
-
 
 
 async def add_test_data():

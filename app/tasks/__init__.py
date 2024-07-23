@@ -1,1 +1,1 @@
-from tasks import remove_expired_reservations
+from tasks import remove_expired_reservations  # noqa

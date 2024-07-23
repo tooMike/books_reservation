@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import select
 
 from app.celery_worker import app
-from app.core.db import AsyncSessionLocal, get_async_session
+from app.core.db import AsyncSessionLocal
 from app.models import Reservation
 
 

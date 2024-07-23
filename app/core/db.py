@@ -1,16 +1,8 @@
 from sqlalchemy import Integer
-from sqlalchemy.ext.asyncio import (
-    async_sessionmaker,
-    AsyncEngine,
-    AsyncSession,
-    create_async_engine,
-)
-from sqlalchemy.orm import (
-    declarative_base,
-    declared_attr,
-    Mapped,
-    mapped_column,
-)
+from sqlalchemy.ext.asyncio import (async_sessionmaker, AsyncEngine,
+                                    AsyncSession, create_async_engine)
+from sqlalchemy.orm import (declarative_base, declared_attr, Mapped,
+                            mapped_column)
 
 from app.core.config import settings
 

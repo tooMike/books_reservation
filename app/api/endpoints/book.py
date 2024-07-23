@@ -3,10 +3,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.api.validators import (
-    check_all_genre_exists, check_author_exists,
-    check_book_exists,
-)
+from app.api.validators import (check_all_genre_exists, check_author_exists,
+                                check_book_exists)
 from app.core.db import get_async_session
 from app.core.users import current_superuser
 from app.crud.book import book_crud

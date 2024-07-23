@@ -6,9 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.db import Base
 
 if TYPE_CHECKING:
-    from app.models.genre import Genre
-    from app.models.author import Author
-    from app.models.reservation import Reservation
+    from app.models import Genre, Author, Reservation
+
 
 book_genre_association = Table(
     "book_genre_association",

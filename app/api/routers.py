@@ -1,12 +1,7 @@
 from fastapi import APIRouter
 
-from app.api.endpoints import (
-    author_router,
-    book_router,
-    genre_router,
-    reservation_router,
-    users_router,
-)
+from app.api.endpoints import (author_router, book_router, genre_router,
+                               reservation_router, users_router)
 
 main_router = APIRouter()
 

@@ -1,5 +1,5 @@
-from .users import User
-from .author import Author
-from .book import Book
-from .genre import Genre
-from .reservation import Reservation
+from .author import Author  # noqa
+from .book import Book  # noqa
+from .genre import Genre  # noqa
+from .reservation import Reservation  # noqa
+from .users import User  # noqa

@@ -1,12 +1,7 @@
 from datetime import datetime, timedelta
 
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    Field,
-    field_validator,
-    model_validator,
-)
+from pydantic import (BaseModel, ConfigDict, Field, field_validator,
+                      model_validator)
 
 FROM_TIME = (
         datetime.now() + timedelta(minutes=10)

@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.crud.base import CRUDBase
-from app.crud.genre import genre_crud
 from app.models import Book, Genre
 
 
@@ -61,7 +60,10 @@ class CRUDBook(CRUDBase):
         # Заменяем в update_data id жанров на объекты модели
         if genres is not None:
             # Подгружаем книгу со связанными жанрами
-            db_obj = await book_crud.get_book(book_id=db_obj.id, session=session)
+            db_obj = await book_crud.get_book(
+                book_id=db_obj.id,
+                session=session
+            )
             db_obj.genres = genres
 
         for field in obj_data:

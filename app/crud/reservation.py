@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import select, and_
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase
@@ -11,13 +11,13 @@ from app.models.reservation import Reservation
 class CRUDReservation(CRUDBase):
 
     async def get_reservations_at_the_same_time(
-        self,
-        *,
-        from_reserve: datetime,
-        to_reserve: datetime,
-        book_id: int,
-        reservation_id: int | None = None,
-        session: AsyncSession,
+            self,
+            *,
+            from_reserve: datetime,
+            to_reserve: datetime,
+            book_id: int,
+            reservation_id: int | None = None,
+            session: AsyncSession,
     ) -> list[Reservation]:
         select_stmt = select(Reservation).where(
             Reservation.book_id == book_id,
@@ -35,9 +35,9 @@ class CRUDReservation(CRUDBase):
         return reservations
 
     async def get_future_reservations_for_book(
-        self,
-        book_id: int,
-        session: AsyncSession
+            self,
+            book_id: int,
+            session: AsyncSession
     ) -> list[Reservation]:
         reservations = await session.execute(
             select(Reservation).where(
@@ -48,9 +48,9 @@ class CRUDReservation(CRUDBase):
         return reservations.scalars().all()
 
     async def get_by_user(
-        self,
-        session: AsyncSession,
-        user: User,
+            self,
+            session: AsyncSession,
+            user: User,
     ) -> list[Reservation]:
         reservations = await session.execute(
             select(Reservation).where(Reservation.user_id == user.id)
