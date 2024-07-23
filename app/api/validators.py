@@ -8,7 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.author import author_crud
 from app.crud.book import book_crud
 from app.crud.genre import genre_crud
-from app.models import Author, Book, Genre
+from app.crud.reservation import reservation_crud
+from app.models import Author, Book, Genre, User
+from app.models.reservation import Reservation
 
 
 async def validate_image(image: UploadFile) -> str:
@@ -106,3 +108,33 @@ async def check_genre_name_duplicate(
             status_code=422,
             detail='Жанр с таким именем уже существует!',
         )
+
+
+async def check_reservation_intersections(**kwargs) -> None:
+    """Проверка пересечений бронирований."""
+    reservations = await reservation_crud.get_reservations_at_the_same_time(
+        **kwargs
+    )
+    if reservations:
+        raise HTTPException(
+            status_code=422,
+            detail=str(reservations)
+        )
+
+async def check_reservation_before_edit(
+    reservation_id: int,
+    session: AsyncSession,
+    user: User
+) -> Reservation:
+    """Проверка существования и возможности редактирования бронирования """
+    reservation = await reservation_crud.get(
+        obj_id=reservation_id, session=session
+    )
+    if not reservation:
+        raise HTTPException(status_code=404, detail='Бронь не найдена!')
+    if not (reservation.user_id == user.id or user.is_superuser):
+        raise HTTPException(
+            status_code=403,
+            detail='Невозможно редактировать или удалить чужую бронь!'
+        )
+    return reservation

@@ -8,6 +8,7 @@ from app.core.db import Base
 if TYPE_CHECKING:
     from app.models.genre import Genre
     from app.models.author import Author
+    from app.models.reservation import Reservation
 
 
 book_genre_association = Table(
@@ -29,6 +30,8 @@ class Book(Base):
     )
     author_id: Mapped[int] = mapped_column(Integer, ForeignKey('author.id'))
     author: Mapped['Author'] = relationship(back_populates='books')
+
+    reservation: Mapped['Reservation'] = relationship(back_populates='book')
 
     def __repr__(self):
         return self.name

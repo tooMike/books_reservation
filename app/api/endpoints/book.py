@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.api.validators import (
     check_all_genre_exists, check_author_exists,
@@ -9,7 +11,8 @@ from app.api.validators import (
 from app.core.db import get_async_session
 from app.core.users import current_superuser
 from app.crud.book import book_crud
-from app.schemas.book import BookCreate, BookDB, BookUpdate
+from app.models import Book, Genre
+from app.schemas.book import BookCreate, BookDB, BookFilter, BookUpdate
 
 router = APIRouter()
 
@@ -22,7 +25,7 @@ router = APIRouter()
 async def create_book(
         obj_in: BookCreate,
         session: AsyncSession = Depends(get_async_session)
-):
+) -> BookDB:
     """Создание книги. Только для суперюзеров."""
     obj_in_data = obj_in.dict()
     genre_ids = obj_in_data.pop('genres')
@@ -47,7 +50,7 @@ async def create_book(
 async def delete_book(
         book_id: int,
         session: AsyncSession = Depends(get_async_session)
-):
+) -> BookDB:
     """Удаление автора. Только для суперюзеров."""
     book = await check_book_exists(book_id=book_id, session=session)
     book = await book_crud.remove(db_obj=book, session=session)
@@ -60,7 +63,7 @@ async def delete_book(
 )
 async def get_all_books(
         session: AsyncSession = Depends(get_async_session),
-):
+) -> list[BookDB]:
     """Получение списка всех книг."""
     books = await book_crud.get_multi_books(session)
     return books
@@ -75,7 +78,7 @@ async def partially_update_book(
         book_id: int,
         obj_in: BookUpdate,
         session: AsyncSession = Depends(get_async_session),
-):
+) -> BookDB:
     """Изменение книги. Только для суперюзеров."""
     # Проверяем, что такая книга существует
     book = await check_book_exists(
@@ -96,3 +99,24 @@ async def partially_update_book(
             db_obj=book, obj_in=obj_in, session=session
         )
     return book
+
+
+@router.post("/books_filter/", response_model=list[BookDB])
+async def get_books(
+        books_filter: BookFilter,
+        session: AsyncSession = Depends(get_async_session)
+) -> list[BookDB]:
+    query = select(Book)
+    if books_filter.author_ids:
+        query = query.filter(Book.author_id.in_(books_filter.author_ids))
+    if books_filter.genre_ids:
+        query = query.join(Book.genres).filter(Genre.id.in_(books_filter.genre_ids))
+    if books_filter.min_price:
+        query = query.filter(Book.price >= books_filter.min_price)
+    if books_filter.max_price:
+        query = query.filter(Book.price <= books_filter.max_price)
+    result = await session.execute(query.options(
+                selectinload(Book.genres),
+            ))
+    books = result.scalars().all()
+    return books

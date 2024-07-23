@@ -40,3 +40,11 @@ class BookDB(BaseModel):
     author_id: int
     genres: list[GenreDB]
     model_config = ConfigDict(from_attributes=True)
+
+
+class BookFilter(BaseModel):
+    """Фильтрация книг."""
+    author_ids: list[int] | None = None
+    genre_ids: list[int] | None = None
+    min_price: float | None = None
+    max_price: float | None = None
