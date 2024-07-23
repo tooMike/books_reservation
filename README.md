@@ -14,7 +14,7 @@ celery -A app.celery_worker beat --loglevel=info
 
 Установка
 
- docker compose exec web bash
+ docker compose exec web alembic upgrade head
 
 Выполнение миграций
 
@@ -23,7 +23,7 @@ celery -A app.celery_worker beat --loglevel=info
 
 
 Загрузка тестовых данных:
-python -m app.test_data.add_data
+ docker compose exec web python -m app.test_data.add_data
 
 
 Проект будет доступен по адресу: 
